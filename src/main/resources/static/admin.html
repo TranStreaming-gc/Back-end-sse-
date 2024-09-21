@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Screen</title>
+</head>
+<body>
+<h1>Admin Screen</h1>
+<div id="user-list"></div>
+
+<script>
+    async function fetchUsers() {
+        // 현재 접속된 사용자 정보를 가져오는 API를 추가해야 합니다.
+        const response = await fetch('/api/users'); // 예시 URL
+        const users = await response.json();
+        return users;
+    }
+
+    async function displayUsers() {
+        const users = await fetchUsers();
+        const userListDiv = document.getElementById('user-list');
+
+        users.forEach(user => {
+            const userDiv = document.createElement('div');
+            userDiv.innerHTML = `
+                    <span>${user}</span>
+                    <button onclick="sendEvent('${user}')">Send Event</button>
+                `;
+            userListDiv.appendChild(userDiv);
+        });
+    }
+
+    async function sendEvent(username) {
+        const message = "Hello from Admin!";
+        await fetch(`/send-event/${username}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(message)
+        });
+    }
+
+    displayUsers();
+</script>
+</body>
+</html>
